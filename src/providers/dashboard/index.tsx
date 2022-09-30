@@ -1,23 +1,30 @@
-import { createContext } from "react";
+import { createContext, useState } from "react";
 import { IChildrenReact } from "..";
 import { api } from "../../service/api";
 
 interface IContextData {
-  CalcAntecipation(): Promise<object>;
+  CalcAntecipation(data: IDataRegister): Promise<object>;
+  resCalcAntecipation: any;
 }
+
+export type IDataRegister = {
+  amount: number | null;
+  installments: number | null;
+  mdr: number | null;
+};
 
 export const DashboardContext = createContext<IContextData>({} as IContextData);
 
 export const DashboardProvider = ({ children }: IChildrenReact) => {
-  const CalcAntecipation = async () => {
+  const [resCalcAntecipation, setResCalcAntecipation] = useState<object | null>(
+    {}
+  );
+
+  const CalcAntecipation = async (data: IDataRegister) => {
     const resCalcAntecipation = await api
-      .post("/", {
-        amount: 20000,
-        installments: 7,
-        mdr: 4,
-      })
+      .post("/", data)
       .then((res) => {
-        console.log(res);
+        setResCalcAntecipation(res.data);
         return res;
       })
       .catch((err) => {
@@ -28,7 +35,9 @@ export const DashboardProvider = ({ children }: IChildrenReact) => {
   };
 
   return (
-    <DashboardContext.Provider value={{ CalcAntecipation }}>
+    <DashboardContext.Provider
+      value={{ CalcAntecipation, resCalcAntecipation }}
+    >
       {children}
     </DashboardContext.Provider>
   );
