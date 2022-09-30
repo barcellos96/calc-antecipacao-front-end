@@ -12,7 +12,6 @@ const Dashboard = () => {
     useContext(DashboardContext);
 
   const arrDays = Object.keys(resCalcAntecipation);
-  console.log(arrDays);
 
   const schema = yup.object().shape({
     amount: yup.number().required(),
@@ -25,25 +24,42 @@ const Dashboard = () => {
   });
 
   const onSubmitFunction = (data: IDataRegister) => {
-    console.log(data);
     CalcAntecipation(data);
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmitFunction)}>
-        <input {...register("amount")} placeholder="valor da venda" />
-        <input {...register("installments")} placeholder="numero de parcelas" />
-        <input {...register("mdr")} placeholder="percentual MDR" />
-        <button type="submit">VERIFICAR ANTECIPAÇÃO</button>
+    <div className="div-container">
+      <form
+        onSubmit={handleSubmit(onSubmitFunction)}
+        className="form-container"
+      >
+        <input
+          {...register("amount")}
+          placeholder="valor da venda"
+          className="input"
+        />
+        <input
+          {...register("installments")}
+          placeholder="numero de parcelas"
+          className="input"
+        />
+        <input
+          {...register("mdr")}
+          placeholder="percentual MDR"
+          className="input"
+        />
+        <button type="submit" className="btn-submit">
+          VERIFICAR ANTECIPAÇÃO
+        </button>
       </form>
 
       <ul className="ul-list">
+        <h3 className="h2-subtitle">VOCÊ RECEBERÁ:</h3>
         {arrDays.length !== 0 ? (
           arrDays.map((day, index) => {
             if (!day[1]) {
               return (
-                <li key={index}>
+                <li key={index} className="li-style">
                   Amanhã:
                   <strong>
                     {resCalcAntecipation[day].toLocaleString("pt-br", {
@@ -56,7 +72,7 @@ const Dashboard = () => {
             }
 
             return (
-              <li key={index}>
+              <li key={index} className="li-style">
                 Em {day} dias:
                 <strong>
                   {resCalcAntecipation[day].toLocaleString("pt-br", {
@@ -68,18 +84,18 @@ const Dashboard = () => {
             );
           })
         ) : (
-          <ul className="ul-list">
-            <li>
-              Amanhã <strong>R$ 0,00</strong>
+          <ul className="ul-list-preload">
+            <li className="li-style">
+              Amanhã: <strong>R$ 0,00</strong>
             </li>
-            <li>
-              Em 15 dias <strong>R$ 0,00</strong>
+            <li className="li-style">
+              Em 15 dias: <strong>R$ 0,00</strong>
             </li>
-            <li>
-              Em 30 dias <strong>R$ 0,00</strong>
+            <li className="li-style">
+              Em 30 dias: <strong>R$ 0,00</strong>
             </li>
-            <li>
-              Em 90 dias <strong>R$ 0,00</strong>
+            <li className="li-style">
+              Em 90 dias: <strong>R$ 0,00</strong>
             </li>
           </ul>
         )}
