@@ -12,6 +12,7 @@ const Dashboard = () => {
     useContext(DashboardContext);
 
   const arrDays = Object.keys(resCalcAntecipation);
+  console.log(arrDays);
 
   const schema = yup.object().shape({
     amount: yup.number().required(),
@@ -38,19 +39,31 @@ const Dashboard = () => {
       </form>
 
       <ul className="ul-list">
-        {!resCalcAntecipation ? (
+        {arrDays.length !== 0 ? (
           arrDays.map((day, index) => {
             if (!day[1]) {
               return (
                 <li key={index}>
-                  Amanhã: <strong>R${resCalcAntecipation[day]}</strong>
+                  Amanhã:
+                  <strong>
+                    {resCalcAntecipation[day].toLocaleString("pt-br", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </strong>
                 </li>
               );
             }
 
             return (
               <li key={index}>
-                Em {day} dias: <strong>{resCalcAntecipation[day]}</strong>
+                Em {day} dias:
+                <strong>
+                  {resCalcAntecipation[day].toLocaleString("pt-br", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </strong>
               </li>
             );
           })
