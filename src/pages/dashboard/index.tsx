@@ -2,8 +2,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { DashboardContext, IDataRegister } from "../../providers/dashboard";
+
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import "./style.css";
 
@@ -14,12 +17,19 @@ const Dashboard = () => {
   const arrDays = Object.keys(resCalcAntecipation);
 
   const schema = yup.object().shape({
-    amount: yup.number().required(),
-    installments: yup.number().required(),
+    amount: yup
+      .number()
+      .required("Minimo de R$1.000,00 requerido")
+      .min(1000, "Minimo de R$1.000,00"),
+    installments: yup.number().required().max(12, "Máximo de 12 parcelas"),
     mdr: yup.number().required(),
   });
 
-  const { register, handleSubmit } = useForm<IDataRegister>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IDataRegister>({
     resolver: yupResolver(schema),
   });
 
@@ -33,21 +43,47 @@ const Dashboard = () => {
         onSubmit={handleSubmit(onSubmitFunction)}
         className="form-container"
       >
+        <span className="span-title">VALOR DA VENDA</span>
         <input
           {...register("amount")}
-          placeholder="valor da venda"
+          placeholder="Ex.: R$1.000,00"
           className="input"
         />
+        <span className="span-title">NÚMERO DE PARCELAS</span>
+        {errors &&
+          errors.amount?.type === "min" &&
+          toast.error(errors.amount?.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            toastId: "amount",
+          })}
+
         <input
           {...register("installments")}
-          placeholder="numero de parcelas"
+          placeholder="Ex.: 3"
           className="input"
         />
-        <input
-          {...register("mdr")}
-          placeholder="percentual MDR"
-          className="input"
-        />
+        <span className="span-exemple">*até 12 parcelas*</span>
+        {errors &&
+          errors.installments?.type === "max" &&
+          toast.error(errors.installments?.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            toastId: "installments",
+          })}
+
+        <span className="span-title">PERCENTUAL MDR</span>
+        <input {...register("mdr")} placeholder="Ex.: 4" className="input" />
         <button type="submit" className="btn-submit">
           VERIFICAR ANTECIPAÇÃO
         </button>
